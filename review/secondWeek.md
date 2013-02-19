@@ -14,8 +14,10 @@
 
 
 
-참고 
+참고
+-------------
   1) JSLint로 실습으로 익히는 closure
     http://nathansjslessons.appspot.com/lesson?id=1000
+    
   2) 모질라 - 클로져란 무엇인가?
     https://developer.mozilla.org/ko/docs/JavaScript/Guide/Closures
