@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<form>
+	<input type="text" id="spinbox">
+	<input type="button" id="spinUp" value="▲">
+	<input type="button" id="spinDown" value="▼">
+</form>
+
+<script type="text/javascript">
+
+var spinbox = document.getElementById("spinbox");
+spinbox.value = "200";
+
+function extractNumber() {
+	spinbox.value = spinbox.value.replace(/[^0-9]/g, "");
+}
+
+function checkMinMax() {
+	if(spinbox.value >= 300) {
+		spinbox.value = 300;
+	} else if(spinbox.value <= 100) {
+		spinbox.value = 100;
+	}
+}
+
+function checkValue() {
+	extractNumber();
+	checkMinMax();
+}
+
+function decrease() {
+	if (spinbox.value > 100) {
+		spinbox.value--;	
+	}
+}
+
+function increase() {
+	if (spinbox.value < 300) {
+		spinbox.value++;
+	}
+}
+
+function doAutoDown() {
+	autoDown = setInterval(decrease, 100);
+}
+
+function doAutoUp() {
+	autoUp = setInterval(increase, 100);
+}
+
+function spinUp() {
+	increase();
+	increaseClick = setTimeout(doAutoUp, 500);
+}
+
+function spinDown() {
+	decrease();
+	decreaseClick = setTimeout(doAutoDown, 500);
+}
+
+function cancelUP() {
+	clearTimeout(increaseClick);
+	clearInterval(autoUp);
+}
+
+function cancelDown() {
+	clearTimeout(decreaseClick);
+	clearInterval(autoDown);
+}
+
+var decreaseClick;
+var increaseClick;
+var autoDown;
+var autoUp;
+
+var increaseBtn = document.getElementById("spinUp");
+var decreaseBtn = document.getElementById("spinDown");
+
+increaseBtn.addEventListener("mousedown", spinUp);
+decreaseBtn.addEventListener("mousedown", spinDown);
+
+window.addEventListener("mouseup", cancelUP);
+window.addEventListener("mouseup", cancelDown);
+
+spinbox.addEventListener("blur", checkValue);
+
+</script>
+</body>
+</html>
+

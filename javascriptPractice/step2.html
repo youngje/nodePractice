@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<style type="text/css">
+.box {
+	height: 100px;
+	width: 100px;
+}
+#redBox {
+	background-color: #ff0000; 
+
+}
+#blueBox {
+	background-color: #0000ff;
+}
+</style>
+
+<body>
+
+<div class="box" id="redBox"> </div>
+
+<div class="box" id="blueBox"> </div>
+
+<script type="text/javascript">
+
+var target = "redBox";
+var draggable;
+
+function addDraggable(target) {
+	draggable = document.getElementById(target);
+	draggable.addEventListener("mousedown", drag);
+}
+
+function drag() {
+	alert(this.className);
+	var newBox = this.cloneNode();
+	alert(newBox.className);
+}
+
+function copyBox( ) {
+
+}
+
+function alertDrop() {
+	alert("Drop");
+}
+
+addDraggable(target);
+</script>
+</body>
+</html>
+
