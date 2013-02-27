@@ -1,0 +1,15 @@
+!!!5
+html
+	head
+		title Test Jade with node.js
+	body
+		// Jade String
+		#header
+			h1 #{name} ... !
+			h2= description
+		hr
+		.article
+			- for (var i = 0; i < 10; i++) {
+				p
+					a(href = "http://www.naver.com", data-test = "multiple Attribute") Go to NAVER #{i}
+			- }
