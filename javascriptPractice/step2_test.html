@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<style type="text/css">
+#redBox {
+	background-color: #ff0000;
+	position: absolute;
+}
+#blueBox {
+	background-color: #0000ff;
+	position: absolute;
+}
+#dragBox {
+	background-color: #ff0000;
+	position: absolute;
+}
+</style>
+
+<body>
+
+<div id="redBox" style="top: 100px; left: 100px; height: 70px; width: 70px"> </div>
+
+<div id="blueBox" style="top: 200px; left: 600px; height: 70px; width: 70px"> </div>
+
+<script type="text/javascript">
+
+var movingBox = "redBox";
+var target = "blueBox";
+var draggable;
+var dropable;
+var dragBox;
+
+function addDraggable(box) {
+	draggable = document.getElementById(box);
+	draggable.addEventListener("mousedown", drag);
+}
+
+function addDropable(box) {
+	dropable = document.getElementById(box);
+}
+
+function drag(event) {
+	document.dragBox = event.target.cloneNode(true);
+	document.dragBox.id = "dragBox";
+	document.getElementsByTagName("body")[0].appendChild(document.dragBox);
+	
+	window.addEventListener("mouseup", drop);
+	window.addEventListener("mousemove", moveDragBox);
+}
+
+function moveDragBox(event) {
+	document.dragBox.style.left = event.clientX + "px";	
+	document.dragBox.style.top = event.clientY + "px";
+}
+
+function alertDrop() {
+	alert("Drop");
+}
+
+function drop() {
+	var cloneBox = document.dragBox;
+	
+	var dropableLeft = parseInt(dropable.style.left);
+	var dropableWidth = parseInt(dropable.style.width);
+	var dropableTop = parseInt(dropable.style.top);
+	var dropableHeight = parseInt(dropable.style.height);
+
+	var isInsideBoxX = (parseInt(cloneBox.style.left) >= dropableLeft && parseInt(cloneBox.style.left) <= dropableLeft + dropableWidth);
+	var isInsideBoxY = (parseInt(cloneBox.style.top) >= dropableTop && parseInt(cloneBox.style.top) <= dropableTop + dropableHeight);
+	
+	if (isInsideBoxX && isInsideBoxY) {
+		alertDrop();
+	} 
+
+	window.removeEventListener("mousemove", moveDragBox);
+	document.getElementsByTagName("body")[0].removeChild(document.dragBox);
+	document.dragBox = null;
+	window.removeEventListener("mouseup", drop);
+}
+
+addDraggable(movingBox);
+addDropable(target);
+
+
+</script>
+</body>
+</html>
+
