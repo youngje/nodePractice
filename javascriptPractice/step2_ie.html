@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<style type="text/css">
+#redBox {
+	background-color: #ff0000;
+	position: absolute;
+}
+#blueBox {
+	background-color: #0000ff;
+	position: absolute;
+}
+#dragBox {
+	background-color: #ff0000;
+	position: absolute;
+}
+div {
+ -webkit-user-select:none;
+} 
+</style>
+
+<body>
+
+<div id="redBox" style="top: 100px; left: 100px; height: 70px; width: 70px"> </div>
+
+<div id="blueBox" style="top: 200px; left: 600px; height: 70px; width: 70px"> </div>
+
+<script type="text/javascript">
+
+var body = document.getElementsByTagName("body")[0];		/* <body> element 선언 */
+
+var movingBox = "redBox";		/* drag 할 element의 id */
+var target = "blueBox";		/* drop 할 element의 id */
+
+var draggable;
+var dropable;
+var dragBox;				/* drag 수행시 복사되어 움직이는 element */
+
+
+/*
+ *  크로스브라우징 지원을 위한 element에 event 추가하는 함수 
+ */
+function addEvent(element, event, func) {
+	if (element.addEventListener) { 		/* IE8 이하가 아닌 경우 */
+		element.addEventListener(event, func, false); 
+	} else if (element.attachEvent) { 		/* IE8 이하인 경우 */
+		element.attachEvent("on" + event, func);
+	} 
+}
+
+/*
+ *  크로스브라우징 지원을 위한 element에 event 제거하는 함수 
+ */
+function removeEvent(element, event, func) {
+	if (element.removeEventListener) { 		/* IE8 이하가 아닌 경우 */
+		element.removeEventListener(event, func, false); 
+	} else if (element.detachEvent) { 		/* IE8 이하인 경우 */
+		element.detachEvent("on" + event, func);
+	} 
+}
+
+/*
+ *  element를 draggable하게 설정하는 함수
+ *  parameter 값 box는 대상 element의 id
+ */
+function addDraggable(box) {
+	draggable = document.getElementById(box);
+	addEvent(draggable, "mousedown", drag);
+}
+
+/*
+ *  element를 dropable하게 설정하는 함수
+ *  parameter 값 box는 대상 element의 id 
+ */
+function addDropable(box) {
+	dropable = document.getElementById(box);
+}
+
+/*
+ *  drag 대상을 복사하고 document에 mouseup과 mousemove event 추가하는 함수
+ */
+function drag(event) {
+	var target = (event.target) ? event.target : event.srcElement;
+	
+	document.dragBox = target.cloneNode(true);
+	document.dragBox.id = "dragBox";
+	body.appendChild(document.dragBox);
+
+	addEvent(document, "mouseup", drop);
+	addEvent(document, "mousemove", moveDragBox);
+}
+
+/*
+ *  drag 하는 element의 위치값에 마우스의 위치값을 실시간으로 반영하는 함수
+ */
+function moveDragBox(event) {
+	document.dragBox.style.left = event.clientX + "px";
+	document.dragBox.style.top = event.clientY + "px";
+}
+
+/*
+ *  drag 하는 element를 drop 했을 때 실행되는 함수
+ */
+function drop() {
+	var cloneBox = document.dragBox;				/* drag 하는 element */
+	
+	var dropableLeft = parseInt(dropable.style.left);		/* drop 목적지 element의 왼쪽 위치 값 */
+	var dropableWidth = parseInt(dropable.style.width);	/* drop 목적지 element의 가로 길이 */
+	var dropableTop = parseInt(dropable.style.top);		/* drop 목적지 element의 위쪽 위치 값 */
+	var dropableHeight = parseInt(dropable.style.height);	/* drop 목적지 element의 세로 길이 */
+
+	/* drop 목적지 element의 가로값에 drag element의 기준점이 들어가면 true, 아니면 false  */
+	var isInsideBoxX = (parseInt(cloneBox.style.left) >= dropableLeft && parseInt(cloneBox.style.left) <= dropableLeft + dropableWidth);
+
+	/* drop 목적지 element의 세로값에 drag element의 기준점이 들어가면 true, 아니면 false  */
+	var isInsideBoxY = (parseInt(cloneBox.style.top) >= dropableTop && parseInt(cloneBox.style.top) <= dropableTop + dropableHeight);
+	
+	/* drop 목적지 element 위에 darg element가 drop 된 경우 */
+	if (isInsideBoxX && isInsideBoxY) {
+		alertDrop();
+	} 
+
+	removeEvent(document, "mousemove", moveDragBox);
+	body.removeChild(document.dragBox);
+	document.dragBox = null;
+	removeEvent(document, "mouseup", drop);
+}
+
+/*
+ *  dropable element에 draggable element를 drop 했을 때 실행되는 함수 
+ */
+function alertDrop() {
+	alert("Drop");
+}
+
+addDraggable(movingBox);
+addDropable(target);
+
+</script>
+</body>
+</html>
+

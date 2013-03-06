@@ -2,50 +2,119 @@
 <html>
 
 <style type="text/css">
-.box {
-	height: 100px;
-	width: 100px;
-}
 #redBox {
-	background-color: #ff0000; 
-
+	background-color: #ff0000;
+	position: absolute;
 }
 #blueBox {
 	background-color: #0000ff;
+	position: absolute;
 }
+#dragBox {
+	background-color: #ff0000;
+	position: absolute;
+}
+div {
+ -webkit-user-select:none;
+} 
 </style>
 
 <body>
 
-<div class="box" id="redBox"> </div>
+<div id="redBox" style="top: 100px; left: 100px; height: 70px; width: 70px"> </div>
 
-<div class="box" id="blueBox"> </div>
+<div id="blueBox" style="top: 200px; left: 600px; height: 70px; width: 70px"> </div>
 
 <script type="text/javascript">
 
-var target = "redBox";
+var movingBox = "redBox";
+var target = "blueBox";
 var draggable;
+var dropable;
+var dragBox;
 
-function addDraggable(target) {
-	draggable = document.getElementById(target);
-	draggable.addEventListener("mousedown", drag);
+var event = event ? event : window.event;
+/*//IE인 경우 
+if (!event) {
+	var event = window.event;
+}*/
+
+function addEvent(element, event, func) {
+	if (element.addEventListener) { // W3C DOM
+		element.addEventListener(event, func, false); 
+	} else if (element.attachEvent) { // IE DOM
+		console.log("addEvent_IE");
+		element.attachEvent("on" + event, func);
+	} else { 
+      		element["on" + event] = func;
+   }
 }
 
-function drag() {
-	alert(this.className);
-	var newBox = this.cloneNode();
-	alert(newBox.className);
+function removeEvent(element, event, func) {
+	if (element.removeEventListener) { // W3C DOM
+		element.removeEventListener(event, func, false); 
+	} else if (element.detachEvent) { // IE DOM
+		element.detachEvent("on" + event, func);
+	} 
 }
 
-function copyBox( ) {
+function addDraggable(box) {
+	draggable = document.getElementById(box);
+	addEvent(draggable, "mousedown", drag);
+}
 
+function addDropable(box) {
+	dropable = document.getElementById(box);
+}
+
+function drag(event) {
+	var target = (event.target) ? event.target : event.srcElement;
+	document.dragBox = target.cloneNode(true);
+	document.dragBox.id = "dragBox";
+	document.getElementsByTagName("body")[0].appendChild(document.dragBox);
+	
+	addEvent(window, "mouseup", drop);
+	addEvent(window, "mousemove", moveDragBox);
+	/*window.addEventListener("mouseup", drop);
+	window.addEventListener("mousemove", moveDragBox);*/
+}
+
+function moveDragBox(event) {
+	document.dragBox.style.left = event.clientX + "px";	
+	document.dragBox.style.top = event.clientY + "px";
 }
 
 function alertDrop() {
 	alert("Drop");
 }
 
-addDraggable(target);
+function drop() {
+	var cloneBox = document.dragBox;
+	
+	var dropableLeft = parseInt(dropable.style.left);
+	var dropableWidth = parseInt(dropable.style.width);
+	var dropableTop = parseInt(dropable.style.top);
+	var dropableHeight = parseInt(dropable.style.height);
+
+	var isInsideBoxX = (parseInt(cloneBox.style.left) >= dropableLeft && parseInt(cloneBox.style.left) <= dropableLeft + dropableWidth);
+	var isInsideBoxY = (parseInt(cloneBox.style.top) >= dropableTop && parseInt(cloneBox.style.top) <= dropableTop + dropableHeight);
+	
+	if (isInsideBoxX && isInsideBoxY) {
+		alertDrop();
+	} 
+
+	// window.removeEventListener("mousemove", moveDragBox);
+	removeEvent(window, "mousemove", moveDragBox);
+	document.getElementsByTagName("body")[0].removeChild(document.dragBox);
+	document.dragBox = null;
+	// window.removeEventListener("mouseup", drop);
+	removeEvent(window, "mouseup", drop);
+}
+
+addDraggable(movingBox);
+addDropable(target);
+
+
 </script>
 </body>
 </html>
